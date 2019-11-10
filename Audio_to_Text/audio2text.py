@@ -22,6 +22,7 @@ import sys
 import os
 from pydub import AudioSegment 
 from pydub.silence import split_on_silence
+from textblob import TextBlob
 
 
 # a function that splits the audio file into chunks 
@@ -66,14 +67,14 @@ def silence_based_conversion(path):
     for chunk in chunks:
         # export audio chunk and save it in  
         # the current directory. 
-        print("saving chunk{0}.wav".format(i))
+        # print("saving chunk{0}.wav".format(i))
        
         chunk.export("chunk{0}.wav".format(i), format ="wav")  
   
         # the name of the newly created chunk 
         file = 'chunk'+str(i)+'.wav'
   
-        print("Processing chunk "+str(i))
+        # print("Processing chunk "+str(i))
   
         # create a speech recognition object 
         r = sr.Recognizer() 
@@ -100,9 +101,31 @@ def silence_based_conversion(path):
     os.chdir('..')
     os.system('rm -rf audio_chunks/')
 
+def textAnalysis(filename = 'output.txt'):
+    url = filename
+    file= open(url)
+    t = file.read()    
+
+    bobo = TextBlob(t)
+
+    score = []
+    score.append(bobo.sentiment[0])
+    score.append(bobo.sentiment[1])
+
+    result = score[0] * 5 + score[1] * 5
+    print("The Response: ")
+    log = open("output.txt", "r")
+    for line in log:
+        print(line)
+    print("\n\nThe essay score out of 10: ")
+    print(result)
+
+    
+
 # the main driver program
 def main():
-	silence_based_conversion(sys.argv[1])
+    silence_based_conversion(sys.argv[1])
+    textAnalysis()
 
 if __name__ == '__main__':
     main()
